@@ -12,9 +12,9 @@ import (
 	_ "golang.org/x/image/bmp"  // Register BMP format
 	_ "golang.org/x/image/webp" // Register WebP format
 
-	args "github.com/ethicalhackingplayground/favlens/pkg/arguments"
-	"github.com/ethicalhackingplayground/favlens/pkg/ollama"
-	"github.com/ethicalhackingplayground/favlens/pkg/types"
+	args "github.com/ethicalhackingplayground/favlens/v2/pkg/arguments"
+	ollama "github.com/ethicalhackingplayground/favlens/v2/pkg/ollama"
+	types "github.com/ethicalhackingplayground/favlens/v2/pkg/types"
 	"github.com/fatih/color"
 	_ "github.com/mat/besticon/ico" // Register ICO format
 	"github.com/projectdiscovery/gologger"
