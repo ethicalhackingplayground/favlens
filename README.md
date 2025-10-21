@@ -6,7 +6,7 @@
 </h1>
 
 <p align="center">
-  <a href="https://github.com/ethicalhackingplayground/favlens/releases/latest">
+  <a href="https://github.com/ethicalhackingplayground/favlens">
     <img src="https://img.shields.io/github/v/release/ethicalhackingplayground/favlens?style=flat-square" alt="Version">
   </a>
   <a href="https://github.com/ethicalhackingplayground/favlens/blob/master/LICENSE">
