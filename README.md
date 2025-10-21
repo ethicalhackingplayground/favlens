@@ -110,7 +110,7 @@ go run tlds.go > tlds.txt
 ### 2) Build candidate root domains
 Concatenate a base label with each TLD to produce roots (example for `bmw`):
 ```
-cat tlds.txt | xargs -P10 -I@ bash -c 'echo "bmw.@"' > roots.txt
+cat tlds.txt | xargs -P10 -I@ bash -c 'echo "bmw@"' > roots.txt
 ```
 This yields candidates like `bmw.com`, `bmw.net`, `bmw.org`, etc.
 
