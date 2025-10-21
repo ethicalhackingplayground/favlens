@@ -2,6 +2,7 @@ package ollama
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -63,7 +64,7 @@ func NewClient(host, model string, timeout time.Duration) *Client {
 		Host:       host,
 		Model:      model,
 		Timeout:    timeout,
-		HTTPClient: &fasthttp.Client{ReadTimeout: timeout, WriteTimeout: timeout},
+		HTTPClient: &fasthttp.Client{ReadTimeout: timeout, WriteTimeout: timeout, TLSConfig: &tls.Config{InsecureSkipVerify: true}},
 	}
 }
 
@@ -87,7 +88,7 @@ func (o *Client) CheckModelExists(debug bool) error {
 	req.SetRequestURI(o.Host + "/api/tags")
 	req.Header.SetMethod("GET")
 
-	if err := o.HTTPClient.DoTimeout(req, resp, o.Timeout); err != nil {
+	if err := o.HTTPClient.DoRedirects(req, resp, 3); err != nil {
 		if debug {
 			gologger.Debug().Msgf("Failed to connect to Ollama API at %s: %v", o.Host, err)
 		}
@@ -98,7 +99,7 @@ func (o *Client) CheckModelExists(debug bool) error {
 		if debug {
 			gologger.Debug().Msgf("Received status %d from /api/tags", resp.StatusCode())
 		}
-		return fmt.Errorf("Ollama API returned status %d", resp.StatusCode())
+		return fmt.Errorf("ollama API returned status %d", resp.StatusCode())
 	}
 
 	var modelsResp ModelsResponse
@@ -152,11 +153,28 @@ func (o *Client) DownloadImageAsBase64(url string, debug bool) (string, error) {
 	defer fasthttp.ReleaseResponse(resp)
 	req.SetRequestURI(url)
 	req.Header.SetMethod("GET")
-	if err := o.HTTPClient.DoTimeout(req, resp, o.Timeout); err != nil {
+	if err := o.HTTPClient.DoRedirects(req, resp, 3); err != nil {
 		if debug {
 			gologger.Debug().Msgf("Failed to fetch %s: %v", url, err)
 		}
 		return "", fmt.Errorf("error fetching %s: %v", url, err)
+	}
+
+	if resp.StatusCode() == 301 {
+		redirectLocation := string(resp.Header.Peek("Location"))
+		if redirectLocation == "" {
+			if debug {
+				gologger.Debug().Msgf("Received redirect status %d from /api/tags, but no Location header", resp.StatusCode())
+			}
+			return "", fmt.Errorf("ollama API returned redirect status %d, but no Location header", resp.StatusCode())
+		}
+		req.SetRequestURI(redirectLocation)
+		if err := o.HTTPClient.DoRedirects(req, resp, 3); err != nil {
+			if debug {
+				gologger.Debug().Msgf("Failed to connect to Ollama API at %s: %v", redirectLocation, err)
+			}
+			return "", fmt.Errorf("failed to connect to Ollama API: %v", err)
+		}
 	}
 
 	if resp.StatusCode() != 200 {
@@ -171,6 +189,8 @@ func (o *Client) DownloadImageAsBase64(url string, debug bool) (string, error) {
 	if debug {
 		gologger.Debug().Msgf("Downloaded %d bytes from %s", len(data), url)
 	}
+
+	gologger.Debug().Msgf("Redirect Location: %d\n", resp.StatusCode())
 
 	// Decode image to check format
 	img, format, err := image.Decode(bytes.NewReader(data))
