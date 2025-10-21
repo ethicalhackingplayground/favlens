@@ -12,10 +12,10 @@
   <a href="https://github.com/ethicalhackingplayground/favlens/blob/master/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License">
   </a>
-  <a href="https://goreportcard.com/report/github.com/ethicalhackingplayground/favlens">
-    <img src="https://goreportcard.com/badge/github.com/ethicalhackingplayground/favlens?style=flat-square" alt="Go Report Card">
+  <a href="https://goreportcard.com/report/github.com/ethicalhackingplayground/favlens/v2">
+    <img src="https://goreportcard.com/badge/github.com/ethicalhackingplayground/favlens/v2?style=flat-square" alt="Go Report Card">
   </a>
-  <a href="https://pkg.go.dev/github.com/ethicalhackingplayground/favlens">
+  <a href="https://pkg.go.dev/github.com/ethicalhackingplayground/favlens/v2">
     <img src="https://pkg.go.dev/badge/github.com/ethicalhackingplayground/favlens.svg" alt="Go Reference">
   </a>
 </p>
