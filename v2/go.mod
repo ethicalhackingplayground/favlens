@@ -1,4 +1,4 @@
-module github.com/ethicalhackingplayground/favlens
+module github.com/ethicalhackingplayground/favlens/v2
 
 go 1.25.3
 
